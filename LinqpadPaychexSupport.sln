@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqpadPaychexSupport", "LinqpadPaychexSupport\LinqpadPaychexSupport.csproj", "{E2D4DC59-A839-44C5-8636-3728CD5E69AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqpadPaychexSupport.Tests", "LinqpadPaychexSupport.Tests\LinqpadPaychexSupport.Tests.csproj", "{1E47D281-BC6D-414E-B10A-E23F7782F723}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{E2D4DC59-A839-44C5-8636-3728CD5E69AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2D4DC59-A839-44C5-8636-3728CD5E69AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2D4DC59-A839-44C5-8636-3728CD5E69AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E47D281-BC6D-414E-B10A-E23F7782F723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E47D281-BC6D-414E-B10A-E23F7782F723}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E47D281-BC6D-414E-B10A-E23F7782F723}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E47D281-BC6D-414E-B10A-E23F7782F723}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using Lcp.Paychex.Api.Interfaces;
 using Lcp.Paychex.Models.Authentication;
 using Newtonsoft.Json;
@@ -33,13 +32,15 @@ namespace LINQPadPaychexSupport
             var when = result.TimeAuthenticated.AddSeconds(result.expires_in);
             Trace.TraceInformation(
                 result.isValid
-                    ? $"Using cached token - expires at {when}, {((int) (when - DateTime.Now).TotalSeconds)} seconds from now."
+                    ? $"Using cached token - expires at {when}, {(int) (when - DateTime.Now).TotalSeconds} seconds from now."
                     : $"Cached token expired at {when}, {HowLongAgo(when)}."
             );
             return result;
         }
 
-        public void Save(PaychexAuthToken token) => 
+        public void Save(PaychexAuthToken token)
+        {
             SaveString(paychexToken, JsonConvert.SerializeObject(token, Formatting.Indented));
+        }
     }
 }
