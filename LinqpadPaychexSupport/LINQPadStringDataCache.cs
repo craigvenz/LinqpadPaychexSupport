@@ -12,32 +12,28 @@ namespace LINQPadPaychexSupport
 {
     public class LINQPadStringDataCache : IPaychexDataCache
     {
+        private const string DefaultPrefix = "paychexData_";
         private readonly ILINQPadUtil _util;
-        const string DefaultPrefix = "paychexData_";
 
         private readonly string _prefix;
+        private readonly TimeSpan _timeToLive = new TimeSpan(365, 0, 0, 0);
         private readonly JsonSerializerSettings _settings;
 
         public bool IgnoreCacheReads { get; set; }
 
-        private class DefaultLINQPadUtil : ILINQPadUtil
-        {
-            public string LoadString(string key) 
-                => LINQPad.Util.LoadString(key);
+        public LINQPadStringDataCache(string apiKey, string prefix = DefaultPrefix) :
+            this(new DefaultLINQPadUtil(), apiKey, default, prefix) { }
 
-            public void SaveString(string key, string value) 
-                => LINQPad.Util.SaveString(key, value);
+        public LINQPadStringDataCache(string apiKey, TimeSpan ttl, string prefix = DefaultPrefix) :
+            this(new DefaultLINQPadUtil(), apiKey, ttl, prefix) { }
 
-            public DateTime GetCacheItemTime(string r) 
-                => File.GetLastWriteTime(Path.Combine(LpDataFolder, r));
-        }
-
-        public LINQPadStringDataCache() : this(DefaultPrefix) { }
-        public LINQPadStringDataCache(string prefix = DefaultPrefix) : this(new DefaultLINQPadUtil(), prefix) { }
-        public LINQPadStringDataCache(ILINQPadUtil util, string prefix = DefaultPrefix)
+        public LINQPadStringDataCache(ILINQPadUtil util, string apiKey, TimeSpan ttl, string prefix = DefaultPrefix)
         {
             _util = util;
             _prefix = prefix;
+            _prefix = $"{prefix}{apiKey}_";
+            if (ttl != default)
+                _timeToLive = ttl;
             _settings =
                 new JsonSerializerSettings()
                 {
@@ -62,14 +58,15 @@ namespace LINQPadPaychexSupport
                 {
                     fi.Delete();
                 }
-                catch (Exception ex) when (ex is IOException || ex is SecurityException || ex is UnauthorizedAccessException)
-                {
-                }
+                catch (Exception ex) when (ex is IOException
+                                           || ex is SecurityException
+                                           || ex is UnauthorizedAccessException) { }
             }
         }
+
         public T Get<T>(string r)
         {
-            if (IgnoreCacheReads) 
+            if (IgnoreCacheReads)
                 return default;
 
             var str = _util.LoadString(CacheKey(r));
@@ -85,9 +82,17 @@ namespace LINQPadPaychexSupport
             Trace.TraceInformation(
                 $"{nameof(LINQPadStringDataCache)} - cache data is from {HowLongAgo(f)}."
             );
+            if (DateTime.Now.Subtract(_timeToLive) > f)
+            {
+                Trace.TraceInformation(
+                    $"{nameof(LINQPadStringDataCache)} - cache data is older than {_timeToLive.TotalMinutes} minutes, invalidating."
+                );
+                Set<T>(r, default);
+                return default;
+            }
             return JsonConvert.DeserializeObject<T>(str, _settings);
         }
         public void Set<T>(string r, T value) => _util.SaveString(CacheKey(r), JsonConvert.SerializeObject(value, _settings));
-        private string CacheKey(string key) => $"{_prefix}{key}";
+        private string CacheKey(string key) => _prefix + key;
     }
 }

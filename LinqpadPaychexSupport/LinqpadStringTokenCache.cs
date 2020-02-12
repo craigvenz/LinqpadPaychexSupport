@@ -3,20 +3,28 @@ using System.Diagnostics;
 using Lcp.Paychex.Api.Interfaces;
 using Lcp.Paychex.Models.Authentication;
 using Newtonsoft.Json;
-using static LINQPad.Util;
 using static LinqpadPaychexSupport.Util;
 
 namespace LINQPadPaychexSupport
 {
     public class LINQPadStringTokenCache : IPaychexTokenCache
     {
-        private const string paychexToken = "paychexAuthToken";
+        private const string DefaultTokenName = "paychexAuthToken";
+
+        private readonly ILINQPadUtil _util;
+        private readonly string _paychexToken;
 
         public bool IgnoreReads { get; set; }
 
-        public void Invalidate()
+        public void Invalidate() => _util.SaveString(_paychexToken, string.Empty);
+
+        public LINQPadStringTokenCache(string apiKey, string tokenName = DefaultTokenName) :
+            this(new DefaultLINQPadUtil(), apiKey, tokenName) { }
+
+        public LINQPadStringTokenCache(ILINQPadUtil util, string apiKey, string tokenName = DefaultTokenName)
         {
-            SaveString(paychexToken, string.Empty);
+            _util = util;
+            _paychexToken = apiKey + "_" + tokenName;
         }
 
         public PaychexAuthToken Load()
@@ -24,11 +32,12 @@ namespace LINQPadPaychexSupport
             if (IgnoreReads)
                 return null;
 
-            var data = LoadString(paychexToken);
+            var data = _util.LoadString(_paychexToken);
 
             var result = string.IsNullOrEmpty(data) ? null : JsonConvert.DeserializeObject<PaychexAuthToken>(data);
             if (result == null)
                 return null;
+
             var when = result.TimeAuthenticated.AddSeconds(result.expires_in);
             Trace.TraceInformation(
                 result.isValid
@@ -38,9 +47,7 @@ namespace LINQPadPaychexSupport
             return result;
         }
 
-        public void Save(PaychexAuthToken token)
-        {
-            SaveString(paychexToken, JsonConvert.SerializeObject(token, Formatting.Indented));
-        }
+        public void Save(PaychexAuthToken token) =>
+            _util.SaveString(_paychexToken, JsonConvert.SerializeObject(token, Formatting.Indented));
     }
 }
