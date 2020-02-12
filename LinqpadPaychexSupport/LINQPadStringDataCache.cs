@@ -16,7 +16,7 @@ namespace LINQPadPaychexSupport
         private readonly ILINQPadUtil _util;
 
         private readonly string _prefix;
-        private readonly TimeSpan _timeToLive = new TimeSpan(365, 0, 0, 0);
+        private readonly TimeSpan _timeToLive = new TimeSpan(30, 0, 0, 0);
         private readonly JsonSerializerSettings _settings;
 
         public bool IgnoreCacheReads { get; set; }
