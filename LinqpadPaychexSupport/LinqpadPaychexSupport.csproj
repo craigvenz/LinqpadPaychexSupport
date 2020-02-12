@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lcp.Paychex">
-      <HintPath>..\..\LcpTracker\Lcp.PaychexApi\bin\Debug\Lcp.Paychex.dll</HintPath>
+    <Reference Include="Lcp.Paychex, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9172ceda0d0a4d70, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Projects\LcpTracker.cvenz\Lcp.PaychexApi\bin\Debug\Lcp.Paychex.dll</HintPath>
     </Reference>
     <Reference Include="LINQPad.Runtime">
       <HintPath>C:\Program Files\LINQPad6\LINQPad.Runtime.dll</HintPath>
@@ -50,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultLINQPadUtil.cs" />
     <Compile Include="ILinqpadUtil.cs" />
     <Compile Include="LINQPadStringDataCache.cs" />
     <Compile Include="LinqpadStringTokenCache.cs" />
